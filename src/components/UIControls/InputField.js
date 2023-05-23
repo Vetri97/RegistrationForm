@@ -9,6 +9,7 @@ import { TextField } from "@mui/material";
  **/
 
 const InputField = (props) => {
+  console.log(props, "props log");
   const { errorText, ...rest } = props;
   const [field, meta] = useField(props);
 

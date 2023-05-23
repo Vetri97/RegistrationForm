@@ -10,6 +10,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { Formik, Form } from "formik";
 import GeneralDetails from "../forms/GeneralDetails";
+import LocationDetails from "../forms/LocationDetails";
 
 import validationSchema from "../formModel/ValidationSchema";
 import registrationFormModel from "../formModel/RegistrationFormModel";
@@ -25,6 +26,8 @@ function _renderStepContent(step) {
   switch (step) {
     case 0:
       return <GeneralDetails formField={formField} />;
+    case 1:
+      return <LocationDetails formField={formField} />;
 
     default:
       return <div>Not Found</div>;
@@ -44,6 +47,8 @@ const Registration = () => {
   const state = useSelector((state) => state);
   console.log(state, "State log");
 
+  console.log(activeStep, "Active steps log");
+
   const currentValidationSchema = validationSchema[activeStep];
   const isLastStep = activeStep === steps.length - 1;
 
@@ -56,6 +61,7 @@ const Registration = () => {
     if (isLastStep) {
       submitForm(values, actions);
     } else {
+      console.log(values, "Values log");
       setActiveStep(activeStep + 1);
       actions.setTouched({});
       actions.setSubmitting(false);

@@ -2,6 +2,11 @@ import React, { Fragment } from "react";
 import { Grid } from "@mui/material";
 import { InputField, SelectField } from "../UIControls";
 
+/**
+ * @author Vetrivel Kumaravel
+ * @function GeneralDetails
+ **/
+
 const occupationData = [
   {
     value: undefined,
@@ -21,7 +26,7 @@ const occupationData = [
   },
 ];
 
-const General_Details = (props) => {
+const GeneralDetails = (props) => {
   const {
     formField: { firstName, lastName, email, occupation },
   } = props;
@@ -51,4 +56,4 @@ const General_Details = (props) => {
   );
 };
 
-export default General_Details;
+export default GeneralDetails;
