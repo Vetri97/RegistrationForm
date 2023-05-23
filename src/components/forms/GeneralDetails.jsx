@@ -2,6 +2,8 @@ import React, { Fragment } from "react";
 import { Grid } from "@mui/material";
 import { InputField, SelectField } from "../UIControls";
 
+// import ProfilePictureCropper from "../profilePictureCropper/ProfilePictureCropper";
+
 /**
  * @author Vetrivel Kumaravel
  * @function GeneralDetails
@@ -30,28 +32,47 @@ const GeneralDetails = (props) => {
   const {
     formField: { firstName, lastName, email, occupation },
   } = props;
+
   return (
     <Fragment>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
-          <InputField name={firstName.name} label={firstName.label} fullWidth />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <InputField name={lastName.name} label={lastName.label} fullWidth />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <InputField name={email.name} label={email.label} fullWidth />
-        </Grid>
+      <div style={{ padding: "20px" }}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={3}></Grid>
+          <Grid item xs={12} sm={6}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <InputField
+                  name={firstName.name}
+                  label={firstName.label}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <InputField
+                  name={lastName.name}
+                  label={lastName.label}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <InputField name={email.name} label={email.label} fullWidth />
+              </Grid>
 
-        <Grid item xs={12} sm={6}>
-          <SelectField
-            name={occupation.name}
-            label={occupation.label}
-            fullWidth
-            data={occupationData}
-          />
+              <Grid item xs={12} sm={6}>
+                <SelectField
+                  name={occupation.name}
+                  label={occupation.label}
+                  fullWidth
+                  data={occupationData}
+                />
+              </Grid>
+
+              {/* <ProfilePictureCropper /> */}
+            </Grid>
+          </Grid>
+          <Grid item xs={12} sm={3}></Grid>
         </Grid>
-      </Grid>
+      </div>
     </Fragment>
   );
 };

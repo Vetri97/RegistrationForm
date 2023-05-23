@@ -1,5 +1,6 @@
-import { put } from "redux-saga/effects";
+import { call, put } from "redux-saga/effects";
 import * as ACTIONS from "./UserRegistrationAction";
+import API from "./UserRegistrationAPI";
 
 import { takeLatest } from "redux-saga/effects";
 import * as TYPES from "./UserRegistrationActionTypes";
@@ -13,6 +14,20 @@ export function* registerUserData(data) {
   }
 }
 
+export function* submitUserData(data) {
+  try {
+    const response = yield call(API.registerUserDetials, data.payload);
+    console.log(response, "response log");
+    if (response.status === 200) {
+      yield put(ACTIONS.clearRegistrationData());
+      localStorage.clear();
+    }
+  } catch (err) {
+    console.log(err, "registration failed");
+  }
+}
+
 export function* UserRegistrationSaga() {
   yield takeLatest(TYPES.REGISTER_USER_DETAILS, registerUserData);
+  yield takeLatest(TYPES.SUBMIT_USER_DETAILS, submitUserData);
 }

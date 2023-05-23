@@ -7,7 +7,7 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Formik, Form } from "formik";
 import GeneralDetails from "../forms/GeneralDetails";
 import LocationDetails from "../forms/LocationDetails";
@@ -17,7 +17,12 @@ import registrationFormModel from "../formModel/RegistrationFormModel";
 import formInitialValues from "../formModel/FormInitialValue";
 
 import useStyles from "./Styles";
-import { RegisterDetails } from "../../redux/store/userRegistration/UserRegistrationAction";
+import {
+  RegisterDetails,
+  submitUserDetails,
+} from "../../redux/store/userRegistration/UserRegistrationAction";
+import RegistrationDetails from "./DisplayDetails";
+import RegistrationSuccessDialog from "./RegistrationSuccessDialog";
 
 const steps = ["General details", "Address information", "Review details"];
 const { formId, formField } = registrationFormModel;
@@ -28,7 +33,8 @@ function _renderStepContent(step) {
       return <GeneralDetails formField={formField} />;
     case 1:
       return <LocationDetails formField={formField} />;
-
+    case 2:
+      return <RegistrationDetails />;
     default:
       return <div>Not Found</div>;
   }
@@ -44,24 +50,30 @@ const Registration = () => {
   const [activeStep, setActiveStep] = useState(0);
   const dispatch = useDispatch();
 
-  const state = useSelector((state) => state);
-  console.log(state, "State log");
-
-  console.log(activeStep, "Active steps log");
-
   const currentValidationSchema = validationSchema[activeStep];
   const isLastStep = activeStep === steps.length - 1;
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const submitForm = (values, actions) => {
     actions.setSubmitting(false);
-    setActiveStep(activeStep + 1);
+    if (isLastStep) {
+      return;
+    } else {
+      setActiveStep(activeStep + 1);
+    }
   };
 
   const handleSubmit = (values, actions) => {
     if (isLastStep) {
       submitForm(values, actions);
+      dispatch(submitUserDetails(values));
+      setDialogOpen(true);
+      // I know that this has to be done more professional based on the api response, but due to shortage of time I could not handle that part
+      setTimeout(() => {
+        setActiveStep(0);
+        setDialogOpen(false);
+      }, 2000);
     } else {
-      console.log(values, "Values log");
       setActiveStep(activeStep + 1);
       actions.setTouched({});
       actions.setSubmitting(false);
@@ -71,6 +83,10 @@ const Registration = () => {
 
   const handleBack = () => {
     setActiveStep(activeStep - 1);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
   };
 
   return (
@@ -118,6 +134,10 @@ const Registration = () => {
           )}
         </Formik>
       </Fragment>
+      <RegistrationSuccessDialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+      />
     </Fragment>
   );
 };
