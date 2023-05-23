@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PlacesAutocomplete, {
   geocodeByAddress,
   geocodeByPlaceId,
@@ -9,13 +9,49 @@ import "./LocationDetails.scss";
 import { Grid } from "@mui/material";
 import { InputField } from "../UIControls";
 import { useFormikContext } from "formik";
+import { useSelector } from "react-redux";
 
 /**
  * @author Vetrivel Kumaravel
  * @function LocationDetails
  **/
 
+function useLocalStorage(key, initialValue, callback) {
+  const callbackRef = useRef(callback);
+
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
+  useEffect(() => {
+    let shouldInvokeCallback = true;
+
+    const handleStorageChange = (event) => {
+      if (event.key === key && shouldInvokeCallback) {
+        callbackRef.current(localStorage.getItem(key));
+      }
+    };
+
+    const storedValue = localStorage.getItem(key);
+    if (storedValue === null) {
+      localStorage.setItem(key, initialValue);
+      callbackRef.current(initialValue);
+    } else {
+      callbackRef.current(storedValue);
+    }
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      shouldInvokeCallback = false;
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [key, initialValue]);
+}
+
 const LocationDetails = (props) => {
+  const stateData = useSelector((state) => state);
+  console.log(stateData, "State");
   const {
     formField: { address1, address2, city, state, country, pincode },
   } = props;
@@ -24,8 +60,13 @@ const LocationDetails = (props) => {
   const [address, setAddress] = useState("");
   const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
 
+  useLocalStorage("address", "", (address) => {
+    setAddress(address);
+    handleSelect(localStorage.getItem("selectedAddress"));
+  });
   const handleSelect = async (selectedAddress) => {
     try {
+      localStorage.setItem("selectedAddress", selectedAddress);
       const results = await geocodeByAddress(selectedAddress);
       const latLng = await getLatLng(results[0]);
 
@@ -68,7 +109,7 @@ const LocationDetails = (props) => {
           addressDetails.pincode = long_name;
         }
       });
-
+      localStorage.setItem("address", address);
       setAddress(formattedAddress);
       setCoordinates(latLng);
       // Update the form fields with the address details
@@ -85,7 +126,6 @@ const LocationDetails = (props) => {
   };
 
   const handleMapClick = async (mapProps, map, clickEvent) => {
-    console.log("getting clicked");
     try {
       const { latLng } = clickEvent;
       const geocodeResults = await geocodeByPlaceId({
@@ -100,54 +140,57 @@ const LocationDetails = (props) => {
   };
 
   return (
-    <div>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={4} md={4} lg={4}></Grid>
-        <Grid item xs={12} sm={4} md={4} lg={4}>
-          <PlacesAutocomplete
-            value={address}
-            onChange={setAddress}
-            onSelect={handleSelect}
-          >
-            {({
-              getInputProps,
-              suggestions,
-              getSuggestionItemProps,
-              loading,
-            }) => (
+    <div style={{ marginTop: "2%" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: "1%",
+        }}
+      >
+        <PlacesAutocomplete
+          value={address}
+          onChange={setAddress}
+          onSelect={handleSelect}
+        >
+          {({
+            getInputProps,
+            suggestions,
+            getSuggestionItemProps,
+            loading,
+          }) => (
+            <div>
+              <input
+                {...getInputProps({ placeholder: "Enter a location" })}
+                style={{
+                  width: "400px",
+                  height: "50px",
+                  marginBottom: "5%",
+                }}
+              />
               <div>
-                <input
-                  {...getInputProps({ placeholder: "Enter a location" })}
-                  style={{
-                    width: "400px",
-                    height: "50px",
-                    marginBottom: "5%",
-                  }}
-                />
-                <div>
-                  {loading ? <div>Loading...</div> : null}
+                {loading ? <div>Loading...</div> : null}
 
-                  {suggestions.map((suggestion) => {
-                    const style = {
-                      backgroundColor: suggestion.active ? "#fafafa" : "#fff",
-                    };
+                {suggestions.map((suggestion) => {
+                  const style = {
+                    backgroundColor: suggestion.active ? "#fafafa" : "#fff",
+                  };
 
-                    return (
-                      <div
-                        {...getSuggestionItemProps(suggestion, { style })}
-                        key={suggestion.placeId}
-                      >
-                        {suggestion.description}
-                      </div>
-                    );
-                  })}
-                </div>
+                  return (
+                    <div
+                      {...getSuggestionItemProps(suggestion, { style })}
+                      key={suggestion.placeId}
+                    >
+                      {suggestion.description}
+                    </div>
+                  );
+                })}
               </div>
-            )}
-          </PlacesAutocomplete>
-        </Grid>
-        <Grid item xs={12} sm={4} md={4} lg={4}></Grid>
-      </Grid>
+            </div>
+          )}
+        </PlacesAutocomplete>
+      </div>
 
       <Grid container spacing={3}>
         <Grid item xs={12} sm={4}>
@@ -169,20 +212,25 @@ const LocationDetails = (props) => {
           <InputField name={pincode.name} label={pincode.label} fullWidth />
         </Grid>
       </Grid>
-
-      <div className="locationMapContainer">
-        <Map
-          google={props.google}
-          zoom={16}
-          initialCenter={coordinates}
-          center={coordinates}
-          onClick={handleMapClick}
-        >
-          {coordinates.lat && coordinates.lng && (
-            <Marker position={coordinates} />
-          )}
-        </Map>
-      </div>
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={2}></Grid>
+        <Grid item xs={12} sm={8}>
+          <div className="locationMapContainer">
+            <Map
+              google={props.google}
+              zoom={16}
+              initialCenter={coordinates}
+              center={coordinates}
+              onClick={handleMapClick}
+            >
+              {coordinates.lat && coordinates.lng && (
+                <Marker position={coordinates} />
+              )}
+            </Map>
+          </div>
+        </Grid>
+        <Grid item xs={12} sm={2}></Grid>
+      </Grid>
     </div>
   );
 };
