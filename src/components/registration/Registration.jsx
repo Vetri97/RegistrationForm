@@ -63,16 +63,19 @@ const Registration = () => {
     }
   };
 
+  const clearDialogAndStepper = () => {
+    setDialogOpen(true);
+    setTimeout(() => {
+      setActiveStep(0);
+      setDialogOpen(false);
+    }, 2000);
+  };
+
   const handleSubmit = (values, actions) => {
     if (isLastStep) {
       submitForm(values, actions);
-      dispatch(submitUserDetails(values));
-      setDialogOpen(true);
-      // I know that this has to be done more professional based on the api response, but due to shortage of time I could not handle that part
-      setTimeout(() => {
-        setActiveStep(0);
-        setDialogOpen(false);
-      }, 2000);
+      dispatch(submitUserDetails(values), actions.resetForm({ values: "" }));
+      clearDialogAndStepper();
     } else {
       setActiveStep(activeStep + 1);
       actions.setTouched({});

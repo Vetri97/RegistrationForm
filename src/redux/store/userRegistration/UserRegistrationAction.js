@@ -10,9 +10,10 @@ export const RegistrationSuccess = (payload) => ({
   payload,
 });
 
-export const submitUserDetails = (payload) => ({
+export const submitUserDetails = (payload, clearForm) => ({
   type: types.SUBMIT_USER_DETAILS,
   payload,
+  clearForm,
 });
 
 export const clearRegistrationData = () => ({

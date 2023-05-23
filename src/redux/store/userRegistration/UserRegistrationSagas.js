@@ -16,11 +16,15 @@ export function* registerUserData(data) {
 
 export function* submitUserData(data) {
   try {
+    const { clearForm } = data;
     const response = yield call(API.registerUserDetials, data.payload);
     console.log(response, "response log");
     if (response.status === 200) {
       yield put(ACTIONS.clearRegistrationData());
       localStorage.clear();
+      if (typeof clearForm === "function") {
+        yield clearForm();
+      }
     }
   } catch (err) {
     console.log(err, "registration failed");
