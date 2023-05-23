@@ -115,7 +115,11 @@ const Registration = () => {
               {_renderStepContent(activeStep)}
 
               <div className={classes.buttons}>
-                {activeStep !== 0 && <Button onClick={handleBack}>Back</Button>}
+                {activeStep !== 0 && (
+                  <Button style={{ marginRight: "auto" }} onClick={handleBack}>
+                    Back
+                  </Button>
+                )}
                 <div className={classes.wrapper}>
                   <Button
                     disabled={isSubmitting}
