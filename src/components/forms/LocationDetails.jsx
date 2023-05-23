@@ -7,7 +7,7 @@ import PlacesAutocomplete, {
 import { Map, Marker, GoogleApiWrapper } from "google-maps-react";
 import "./LocationDetails.scss";
 import { Grid } from "@mui/material";
-import { InputField } from "../UIControls";
+import { InputField } from "../uiControls";
 import { useFormikContext } from "formik";
 import { useSelector } from "react-redux";
 
@@ -141,77 +141,77 @@ const LocationDetails = (props) => {
 
   return (
     <div style={{ marginTop: "2%" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginBottom: "1%",
-        }}
-      >
-        <PlacesAutocomplete
-          value={address}
-          onChange={setAddress}
-          onSelect={handleSelect}
-        >
-          {({
-            getInputProps,
-            suggestions,
-            getSuggestionItemProps,
-            loading,
-          }) => (
-            <div>
-              <input
-                {...getInputProps({ placeholder: "Enter a location" })}
-                style={{
-                  width: "400px",
-                  height: "50px",
-                  marginBottom: "5%",
-                }}
-              />
-              <div>
-                {loading ? <div>Loading...</div> : null}
-
-                {suggestions.map((suggestion) => {
-                  const style = {
-                    backgroundColor: suggestion.active ? "#fafafa" : "#fff",
-                  };
-
-                  return (
-                    <div
-                      {...getSuggestionItemProps(suggestion, { style })}
-                      key={suggestion.placeId}
-                    >
-                      {suggestion.description}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </PlacesAutocomplete>
-      </div>
-
       <Grid container spacing={3}>
+        <Grid item xs={12} sm={4}></Grid>
         <Grid item xs={12} sm={4}>
-          <InputField name={address1.name} label={address1.label} fullWidth />
+          <PlacesAutocomplete
+            value={address}
+            onChange={setAddress}
+            onSelect={handleSelect}
+          >
+            {({
+              getInputProps,
+              suggestions,
+              getSuggestionItemProps,
+              loading,
+            }) => (
+              <div>
+                <input
+                  {...getInputProps({ placeholder: "Enter a location" })}
+                  style={{
+                    width: "400px",
+                    height: "50px",
+                  }}
+                />
+                <div>
+                  {loading ? <div>Loading...</div> : null}
+
+                  {suggestions.map((suggestion) => {
+                    const style = {
+                      backgroundColor: suggestion.active ? "#fafafa" : "#fff",
+                      border: "1px solid black",
+                      cursor: "pointer",
+                      padding: "10px",
+                    };
+
+                    return (
+                      <div
+                        {...getSuggestionItemProps(suggestion, { style })}
+                        key={suggestion.placeId}
+                      >
+                        {suggestion.description}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </PlacesAutocomplete>
         </Grid>
-        <Grid item xs={12} sm={4}>
-          <InputField name={address2.name} label={address2.label} fullWidth />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <InputField name={city.name} label={city.label} fullWidth />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <InputField name={state.name} label={state.label} fullWidth />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <InputField name={country.name} label={country.label} fullWidth />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <InputField name={pincode.name} label={pincode.label} fullWidth />
-        </Grid>
+        <Grid item xs={12} sm={4}></Grid>
       </Grid>
+      <div style={{ marginTop: "1.5%" }}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={4}>
+            <InputField name={address1.name} label={address1.label} fullWidth />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <InputField name={address2.name} label={address2.label} fullWidth />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <InputField name={city.name} label={city.label} fullWidth />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <InputField name={state.name} label={state.label} fullWidth />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <InputField name={country.name} label={country.label} fullWidth />
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <InputField name={pincode.name} label={pincode.label} fullWidth />
+          </Grid>
+        </Grid>
+      </div>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={2}></Grid>
         <Grid item xs={12} sm={8}>

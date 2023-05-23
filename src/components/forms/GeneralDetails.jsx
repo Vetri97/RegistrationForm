@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { Grid } from "@mui/material";
-import { InputField, SelectField } from "../UIControls";
+import { InputField, SelectField } from "../uiControls";
 
 // import ProfilePictureCropper from "../profilePictureCropper/ProfilePictureCropper";
 
